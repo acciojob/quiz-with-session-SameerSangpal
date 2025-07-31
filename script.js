@@ -41,28 +41,29 @@ function renderQuestions() {
     questionElement.classList.add("question");
 
     const questionText = document.createElement("p");
-    questionText.textContent = `${i + 1}. ${question.question}`;
+    questionText.textContent = question.question; 
     questionElement.appendChild(questionText);
 
     for (let j = 0; j < question.choices.length; j++) {
       const choice = question.choices[j];
-
       const label = document.createElement("label");
-      const choiceElement = document.createElement("input");
-      choiceElement.setAttribute("type", "radio");
-      choiceElement.setAttribute("name", `question-${i}`);
-      choiceElement.setAttribute("value", choice);
+
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = `question-${i}`;
+      radio.value = choice;
 
       if (userAnswers[`q${i}`] === choice) {
-        choiceElement.checked = true;
+        radio.setAttribute("checked", "true");
+        radio.checked = true;
       }
 
-      choiceElement.addEventListener("change", () => {
+      radio.addEventListener("change", () => {
         userAnswers[`q${i}`] = choice;
         sessionStorage.setItem("progress", JSON.stringify(userAnswers));
       });
 
-      label.appendChild(choiceElement);
+      label.appendChild(radio);
       label.appendChild(document.createTextNode(choice));
       questionElement.appendChild(label);
       questionElement.appendChild(document.createElement("br"));
@@ -75,22 +76,23 @@ function renderQuestions() {
 function calculateScore() {
   let score = 0;
 
-  questions.forEach((question, index) => {
+  questions.forEach((q, index) => {
     const userAnswer = userAnswers[`q${index}`];
-    if (userAnswer === question.answer) {
+    if (userAnswer === q.answer) {
       score++;
     }
   });
 
-  scoreDiv.textContent = `Your score is ${score} out of ${questions.length}.`;
+  const scoreText = `Your score is ${score} out of ${questions.length}.`;
+  scoreDiv.textContent = scoreText;
   localStorage.setItem("score", score);
 }
 
 renderQuestions();
 
-const storedScore = localStorage.getItem("score");
-if (storedScore !== null) {
-  scoreDiv.textContent = `Your score is ${storedScore} out of ${questions.length}.`;
+const savedScore = localStorage.getItem("score");
+if (savedScore !== null) {
+  scoreDiv.textContent = `Your score is ${savedScore} out of ${questions.length}.`;
 }
 
 submitBtn.addEventListener("click", calculateScore);
